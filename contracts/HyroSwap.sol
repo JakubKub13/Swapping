@@ -96,7 +96,80 @@ contract HyroSwap {
         }
     }
 
-    //function hyroSwapUniswapV3MultiHop() external {}
+// WETH -> USDC -> DAI
+    function hyroSwapUniswapV3MultiHopExactInput(
+        address _uniswapV3Router,
+        address _tokenIn,
+        address _pathToken,
+        address _tokenOut,
+        uint256 _amountIn,
+        uint256 _amountOutMin
+    ) external {
+        require(_amountIn > 0, "amount must be greater than 0");
+        require(_tokenIn != _tokenOut, "tokenIn and tokenOut must be different");
+
+        IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn);
+        IERC20(_tokenIn).approve(_uniswapV3Router, _amountIn);
+
+        bytes memory path = abi.encodePacked(
+            _tokenIn,
+            uint24(3000),
+            _pathToken,
+            uint24(100),
+            _tokenOut
+        );
+
+        ISwapRouter.ExactInputParams memory params = ISwapRouter
+            .ExactInputParams({
+                path: path,
+                recipient: msg.sender,
+                deadline: block.timestamp,
+                amountIn: _amountIn,
+                amountOutMinimum: _amountOutMin
+            });
+
+        ISwapRouter(_uniswapV3Router).exactInput(params);
+    }
+
+// DAI -> USDC -> WETH
+    function hyroSwapUniswapV3MultiHopExactOutput(
+        address _uniswapV3Router,
+        address _tokenIn,
+        address _pathToken,
+        address _tokenOut,
+        uint256 _amountOutDesired,
+        uint256 _amountInMax
+    ) external {
+        require(_amountOutDesired > 0, "amount must be greater than 0");
+        require(_tokenIn != _tokenOut, "tokenIn and tokenOut must be different");
+
+        IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountInMax);
+        IERC20(_tokenIn).approve(_uniswapV3Router, _amountInMax);
+
+        bytes memory path = abi.encodePacked(
+            _tokenIn,
+            uint24(100),
+            _pathToken,
+            uint24(3000),
+            _tokenOut
+        );
+
+        ISwapRouter.ExactOutputParams memory params = ISwapRouter
+            .ExactOutputParams({
+                path: path,
+                recipient: msg.sender,
+                deadline: block.timestamp,
+                amountOut: _amountOutDesired,
+                amountInMaximum: _amountInMax
+            });
+
+        uint256 amountIn = ISwapRouter(_uniswapV3Router).exactOutput(params);
+
+        if(amountIn < _amountInMax) {
+            IERC20(_tokenIn).approve(_uniswapV3Router, 0);
+            IERC20(_tokenIn).transfer(msg.sender, _amountInMax - amountIn);
+        }
+    }
 
 
 // UNISWAP V2 -----------------------------------------------------------------------------------------------------------------------------
