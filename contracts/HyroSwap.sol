@@ -29,7 +29,8 @@ contract HyroSwap {
     }
 
 
-// Single Hop Swap V3
+// UNISWAP V3 -----------------------------------------------------------------------------------------------------------------------------
+
     function hyroSwapUniswapV3SingleHopExactAmountIn(
         address _uniswapV3Router,
         address _tokenIn,
@@ -274,4 +275,8 @@ contract HyroSwap {
             IERC20(_tokenIn).transfer(msg.sender, _amountInMax - amounts[0]);
         }
     }
+
+
+// 1Inch -----------------------------------------------------------------------------------------------------------------------------
+
 }
