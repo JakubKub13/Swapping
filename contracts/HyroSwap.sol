@@ -149,7 +149,7 @@ contract HyroSwap {
 
         bytes memory path = abi.encodePacked(
             _tokenIn,
-            uint24(100),
+            uint24(3000),
             _pathToken,
             uint24(3000),
             _tokenOut
