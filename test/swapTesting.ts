@@ -118,20 +118,34 @@ describe("HyroSwap", () => {
     })
 
     it("Should swap DAI to USDC to WETH uniswapV3 multi hop exact output", async () => {   /// Debugging this test
-        const daiAmountAcc1BeforeSwap = await dai.balanceOf(acc1.address);
-        const wethAmountAcc1BeforeSwap = await weth.balanceOf(acc1.address);
-        console.log("daiAmountAcc1BeforeSwap: ", ethers.utils.formatUnits(daiAmountAcc1BeforeSwap, 18));
-        console.log("wethAmountAcc1BeforeSwap: ", ethers.utils.formatEther(wethAmountAcc1BeforeSwap));
-        const approvalTx = await dai.connect(acc1).approve(HyroSwapContract.address, ethers.utils.parseUnits("5000",18));
-        await approvalTx.wait();
-        const wethAmountDesired = ethers.utils.parseEther("1");
-        const daiAmountToSwap = ethers.utils.parseUnits("2000",18);
-        const daiSwapTx = await HyroSwapContract.connect(acc1).hyroSwapUniswapV3MultiHopExactOutput(UNISWAPV3ROUTER, DAI, USDC, WETH, wethAmountDesired, daiAmountToSwap);
-        await daiSwapTx.wait();
+        // const daiAmountAcc1BeforeSwap = await dai.balanceOf(acc1.address);
+        // const wethAmountAcc1BeforeSwap = await weth.balanceOf(acc1.address);
+        // console.log("daiAmountAcc1BeforeSwap: ", ethers.utils.formatUnits(daiAmountAcc1BeforeSwap, 18));
+        // console.log("wethAmountAcc1BeforeSwap: ", ethers.utils.formatEther(wethAmountAcc1BeforeSwap));
+        // const approvalTx = await dai.connect(acc1).approve(HyroSwapContract.address, ethers.utils.parseUnits("5000",18));
+        // await approvalTx.wait();
+        // const wethAmountDesired = ethers.utils.parseEther("1");
+        // const daiAmountToSwap = ethers.utils.parseUnits("2000",18);
+        // const daiSwapTx = await HyroSwapContract.connect(acc1).hyroSwapUniswapV3MultiHopExactOutput(UNISWAPV3ROUTER, DAI, USDC, WETH, wethAmountDesired, daiAmountToSwap);
+        // await daiSwapTx.wait();
         // const daiAmountAcc1AfterSwap = await dai.balanceOf(acc1.address);
         // const wethAmountAcc1AfterSwap = await weth.balanceOf(acc1.address);
         // console.log("daiAmountAcc1AfterSwap: ", ethers.utils.formatUnits(daiAmountAcc1AfterSwap, 18));
         // console.log("wethAmountAcc1AfterSwap: ", ethers.utils.formatEther(wethAmountAcc1AfterSwap));
+
+        const daiAmountAcc1BeforeSwap = await dai.balanceOf(acc1.address);
+        const crvAmountAcc1BeforeSwap = await crv.balanceOf(acc1.address);
+        console.log("daiAmountAcc1BeforeSwap: ", ethers.utils.formatUnits(daiAmountAcc1BeforeSwap, 18));
+        console.log("crvAmountAcc1BeforeSwap: ", ethers.utils.formatUnits(crvAmountAcc1BeforeSwap, 18));
+        const approvalTx = await dai.connect(acc1).approve(HyroSwapContract.address, ethers.utils.parseUnits("5000",18));
+        await approvalTx.wait();
+        const daiAmountToSwap = ethers.utils.parseUnits("5000",18);
+        const daiSwapTx = await HyroSwapContract.connect(acc1).hyroSwapUniswapV3MultiHopExactInput(UNISWAPV3ROUTER, DAI, WETH, CRV, daiAmountToSwap, 0);
+        await daiSwapTx.wait();
+        const daiAmountAcc1AfterSwap = await dai.balanceOf(acc1.address);
+        const crvAmountAcc1AfterSwap = await crv.balanceOf(acc1.address);
+        console.log("daiAmountAcc1AfterSwap: ", ethers.utils.formatUnits(daiAmountAcc1AfterSwap, 18));
+        console.log("crvAmountAcc1AfterSwap: ", ethers.utils.formatUnits(crvAmountAcc1AfterSwap, 18));
     });
 
 // UNISWAP V2 SWAP TESTS----------------------------------------------------------------------------------------------------------------------------
@@ -151,7 +165,7 @@ describe("HyroSwap", () => {
         console.log("wbtcAmountAcc1AfterSwap: ", ethers.utils.formatUnits(wbtcAmountAcc1AfterSwap, 8));
     })
 
-    it("Should swap WBTC for WETH uniswapV2 single hop exact input", async() => {
+    it("Should swap WBTC for WETH uniswapV2 single hop exact output", async() => {
         const wbtcAmountAcc1BeforeSwap = await wbtc.balanceOf(acc1.address);
         const wethAmountAcc1BeforeSwap = await weth.balanceOf(acc1.address);
         console.log("wbtcAmountAcc1BeforeSwap: ", ethers.utils.formatUnits(wbtcAmountAcc1BeforeSwap, 8));
@@ -210,5 +224,7 @@ describe("HyroSwap", () => {
         console.log("crvAmountAcc1AfterSwap2: ", ethers.utils.formatUnits(crvAmountAcc1AfterSwap2, 18));
         console.log("daiAmountAcc1AfterSwap2: ", ethers.utils.formatUnits(daiAmountAcc1AfterSwap2, 18));
     })
+
+    
 
 })

@@ -37,7 +37,7 @@ contract HyroSwap {
         address _tokenOut,
         uint256 _amount,
         uint256 _amountOutMin
-    ) external payable returns (uint256 amountOut) {
+    ) external {
         require(_amount > 0, "amount must be greater than 0");
         require(_tokenIn != _tokenOut, "tokenIn and tokenOut must be different");
 
@@ -50,19 +50,18 @@ contract HyroSwap {
                 tokenIn: _tokenIn,
                 tokenOut: _tokenOut,
                 fee: 3000,
-                recipient: address(this),
+                recipient: msg.sender,
                 deadline: block.timestamp,
                 amountIn: _amount,
                 amountOutMinimum: _amountOutMin,
                 sqrtPriceLimitX96: 0
             });
 
-        amountOut = ISwapRouter(_uniswapV3Router).exactInputSingle(params);
+        uint256 amountOut = ISwapRouter(_uniswapV3Router).exactInputSingle(params);
         console.log(amountOut, "Amount out from swap");
 
-        IERC20(_tokenOut).transfer(msg.sender, amountOut);
         emit Swap(_tokenIn, _tokenOut, _amount, amountOut, msg.sender);
-        return amountOut;
+        
     }
 
     function hyroSwapUniswapV3SingleHopExactAmountOut(
@@ -116,7 +115,7 @@ contract HyroSwap {
             _tokenIn,
             uint24(3000),
             _pathToken,
-            uint24(100),
+            uint24(3000),
             _tokenOut
         );
 
@@ -279,4 +278,5 @@ contract HyroSwap {
 
 // 1Inch -----------------------------------------------------------------------------------------------------------------------------
 
+    
 }
