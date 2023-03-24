@@ -8,14 +8,21 @@ const walletAddress = '0x...xxx'; // Set your wallet address
 const privateKey = '0x...xxx'; // Set private key of your wallet. Be careful! Don't share this key to anyone!
 
 const swapParams = {
-    fromTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // USDC
+    fromTokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
     toTokenAddress: '0x6B175474E89094C44Da98b954EedeAC495271d0F', // DAI
-    amount: '100000000000000000',
-    fromAddress: '0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326',
+    amount: '10000',
+    fromAddress: '0xeeA031426c880698fC5b34724fb7a774Ef2D1450',
     slippage: 1,
     disableEstimate: false,
     allowPartialFill: false,
 };
+
+const quoteParams = {
+    fromTokenAddress: '0x6B175474E89094C44Da98b954EedeAC495271d0F', // DAI
+    toTokenAddress: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', // WBTC
+    amount: '10000000000000000000000000', //10M
+    complexityLevel: 3
+}
 
 const broadcastApiUrl = 'https://tx-gateway.1inch.io/v1.1/' + chainId + '/broadcast';
 const apiBaseUrl = 'https://api.1inch.io/v5.0/' + chainId ;
@@ -42,16 +49,33 @@ function getSwapDataWithParams(_swapParams) {
         .then(res => res.json()).then(res => res.tx);
 }
 
+function getQuote(_quoteParams) {
+    return fetch(apiRequestUrl('/quote', _quoteParams))
+        .then(res => res.json())
+}
+
 
 async function main() {
 
     // const allowance = await checkAllowance(swapParams.fromTokenAddress, walletAddress);
-    const swapData = await getSwapData("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", "0x111111111117dc0aa78b770fa6a738034120c302", "100000000", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326", "1")
+    const swapData = await getSwapData("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", "0x111111111117dc0aa78b770fa6a738034120c302", "100", "0xeeA031426c880698fC5b34724fb7a774Ef2D1450", "1")
     const tx = await getSwapDataWithParams(swapParams)
     console.log(`swap data: `)
     console.log(swapData)
     console.log(`tx:`)
     console.log(tx)
+
+    const quote = await getQuote(quoteParams)
+    console.log(quote)
+    const protocolsLength = quote.protocols[0].length
+    console.log(`protocols length: ${protocolsLength}`)
+    for (let i=0; i<protocolsLength; i++) {
+        // console.log(quote.protocols[i])
+        // console.log(quote.protocols[i][0])
+        console.log(quote.protocols[0][i])
+        console.log(quote.protocols[i][0])
+    }
+    
 }
 
 main();
