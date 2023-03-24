@@ -8,10 +8,10 @@ const walletAddress = '0x...xxx'; // Set your wallet address
 const privateKey = '0x...xxx'; // Set private key of your wallet. Be careful! Don't share this key to anyone!
 
 const swapParams = {
-    fromTokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
+    fromTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // USDC
     toTokenAddress: '0x6B175474E89094C44Da98b954EedeAC495271d0F', // DAI
     amount: '100000000000000000',
-    fromAddress: walletAddress,
+    fromAddress: '0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326',
     slippage: 1,
     disableEstimate: false,
     allowPartialFill: false,
@@ -46,9 +46,12 @@ function getSwapDataWithParams(_swapParams) {
 async function main() {
 
     // const allowance = await checkAllowance(swapParams.fromTokenAddress, walletAddress);
-    const swapData = await getSwapData("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "0x6B175474E89094C44Da98b954EedeAC495271d0F", "100000000", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326", "1")
-    // const tx = await getSwapDataWithParams(swapParams)
+    const swapData = await getSwapData("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", "0x111111111117dc0aa78b770fa6a738034120c302", "100000000", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326", "1")
+    const tx = await getSwapDataWithParams(swapParams)
+    console.log(`swap data: `)
     console.log(swapData)
+    console.log(`tx:`)
+    console.log(tx)
 }
 
 main();
