@@ -21,7 +21,7 @@ const quoteParams = {
     fromTokenAddress: '0x6B175474E89094C44Da98b954EedeAC495271d0F', // DAI
     toTokenAddress: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', // WBTC
     amount: '10000000000000000000000000', //10M
-    complexityLevel: 3
+    // complexityLevel: 2
 }
 
 const broadcastApiUrl = 'https://tx-gateway.1inch.io/v1.1/' + chainId + '/broadcast';
@@ -54,6 +54,16 @@ function getQuote(_quoteParams) {
         .then(res => res.json())
 }
 
+function expandRoute(protocols) {
+    for (let i = 0; i < protocols.length; i++) {
+        if (Array.isArray(protocols[i])) {
+          expandRoute(protocols[i]); // recursively display nested arrays
+        } else {
+          console.log(protocols[i]); // display non-array elements
+        }
+      }
+}
+
 
 async function main() {
 
@@ -66,15 +76,7 @@ async function main() {
     console.log(tx)
 
     const quote = await getQuote(quoteParams)
-    console.log(quote)
-    const protocolsLength = quote.protocols[0].length
-    console.log(`protocols length: ${protocolsLength}`)
-    for (let i=0; i<protocolsLength; i++) {
-        // console.log(quote.protocols[i])
-        // console.log(quote.protocols[i][0])
-        console.log(quote.protocols[0][i])
-        console.log(quote.protocols[i][0])
-    }
+    expandRoute(quote.protocols)
     
 }
 
